@@ -1,10 +1,9 @@
 import Item from '../Item.vue'
-import Vue from 'vue'
+import { mount } from '@vue/test-utils'
 
 describe('Item.vue', () => {
-  test('renders "item"', () => {
-    const Ctor = Vue.extend(Item)
-    const vm = new Ctor().$mount()
-    expect(vm.$el.textContent).toContain('item')
+  test('renders item', () => {
+    const wrapper = mount(Item)
+    expect(wrapper.text()).toContain('item')
   })
 })
