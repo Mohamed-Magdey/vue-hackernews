@@ -35,7 +35,8 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "@vue/standard"
+      "@vue/standard",
+      "eslint:recommended"
     ],
     "rules": {
       "prefer-promise-reject-errors": 0,
