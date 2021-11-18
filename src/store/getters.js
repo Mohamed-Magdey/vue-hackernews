@@ -1,7 +1,9 @@
 export default {
-  displayItems() {
+  displayItems(state) {
+    return state.items.slice(0, 20)
   },
 
-  maxPage() {
+  maxPage(state) {
+    return Math.ceil(state.items.length / 20)
   }
 }
