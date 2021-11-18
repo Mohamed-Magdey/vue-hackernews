@@ -1,5 +1,5 @@
 export default {
-  SET_ITEMS() {
-
+  SET_ITEMS(state, { items }) {
+    state.items = items
   }
 }
