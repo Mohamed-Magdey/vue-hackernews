@@ -3,16 +3,24 @@ import Item from '../../components/Item.vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import flushPromises from 'flush-promises'
+import mergeWith from 'lodash.mergewith'
+
+// For accepting empty default values
+function customizer(objValue, srcValue) {
+  if (Array.isArray(srcValue)) {
+    return srcValue
+  }
+  if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+    return srcValue
+  }
+}
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
 describe('ItemListt.vue', () => {
-  let storeOptions
-  let store
-
-  beforeEach(() => {
-    storeOptions = {
+  function createStore(overrides) {
+    const defaultStoreConfig = {
       getters: {
         displayItems: jest.fn()
       },
@@ -20,23 +28,33 @@ describe('ItemListt.vue', () => {
         fetchListData: jest.fn(() => Promise.resolve())
       }
     }
-    store = new Vuex.Store(storeOptions)
-  })
+    return new Vuex.Store(mergeWith(defaultStoreConfig, overrides, customizer))
+  }
+
+  function createWrapper(overrides) {
+    const defaultMountingOptions = {
+      mocks: {
+        $bar: {
+          start: jest.fn(),
+          finish: jest.fn(),
+          fail: jest.fn()
+        }
+      },
+      localVue,
+      store: createStore()
+    }
+    return shallowMount(ItemList, mergeWith(defaultMountingOptions, overrides, customizer))
+  }
 
   test('renders an Item with data for each item in displayItems', () => {
-    const $bar = {
-      start: () => { },
-      finish: () => { }
-    }
     const items = [{}, {}, {}]
-    storeOptions.getters.displayItems.mockReturnValue(items)
-    const wrapper = shallowMount(ItemList, {
-      mocks: { $bar },
-      localVue,
-      store
+    const store = createStore({
+      getters: {
+        displayItems: () => items
+      }
     })
+    const wrapper = createWrapper({ store })
     const Items = wrapper.findAll(Item)
-
     expect(Items).toHaveLength(items.length)
     Items.wrappers.forEach((wrapper, i) => {
       expect(wrapper.vm.item).toBe(items[i])
@@ -44,33 +62,32 @@ describe('ItemListt.vue', () => {
   })
 
   test('calls $bar start on load', () => {
-    const $bar = {
-      start: jest.fn(),
-      finish: () => { }
+    const mocks = {
+      $bar: {
+        start: jest.fn()
+      }
     }
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
-    expect($bar.start).toHaveBeenCalledTimes(1)
+    createWrapper({ mocks })
+    expect(mocks.$bar.start).toHaveBeenCalledTimes(1)
   })
 
   test('calls $bar.finish when load is successful', async () => {
     expect.assertions(1)
-    const $bar = {
-      start: () => { },
-      finish: jest.fn()
+    const mocks = {
+      $bar: {
+        finish: jest.fn()
+      }
     }
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    createWrapper({ mocks })
     await flushPromises()
-    expect($bar.finish).toHaveBeenCalledTimes(1)
+    expect(mocks.$bar.finish).toHaveBeenCalledTimes(1)
   })
 
   test('dispatches fetchListData with top', async () => {
     expect.assertions(1)
-    const $bar = {
-      start: () => { },
-      finish: () => { }
-    }
+    const store = createStore()
     store.dispatch = jest.fn(() => Promise.resolve())
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+    createWrapper({ store })
     expect(store.dispatch).toHaveBeenCalledWith('fetchListData', {
       type: 'top'
     })
@@ -78,13 +95,19 @@ describe('ItemListt.vue', () => {
 
   test('calls $bar.fail when load unsuccessful', async () => {
     expect.assertions(1)
-    const $bar = {
-      start: () => { },
-      fail: jest.fn()
+    const store = createStore({
+      actions: {
+        fetchListData: jest.fn(() => Promise.reject())
+      }
+    })
+    const mocks = {
+      $bar: {
+        fail: jest.fn()
+      }
     }
-    storeOptions.actions.fetchListData.mockRejectedValue()
-    shallowMount(ItemList, { mocks: { $bar }, localVue, store })
+
+    createWrapper({ mocks, store })
     await flushPromises()
-    expect($bar.fail).toHaveBeenCalled()
+    expect(mocks.$bar.fail).toHaveBeenCalled()
   })
 })
