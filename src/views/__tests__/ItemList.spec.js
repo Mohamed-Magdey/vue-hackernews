@@ -38,6 +38,9 @@ describe('ItemListt.vue', () => {
           start: jest.fn(),
           finish: jest.fn(),
           fail: jest.fn()
+        },
+        $route: {
+          params: 'top'
         }
       },
       localVue,
@@ -83,14 +86,18 @@ describe('ItemListt.vue', () => {
     expect(mocks.$bar.finish).toHaveBeenCalledTimes(1)
   })
 
-  test('dispatches fetchListData with top', async () => {
+  test('dispatches fetchListData with $route.params.type', async () => {
     expect.assertions(1)
     const store = createStore()
     store.dispatch = jest.fn(() => Promise.resolve())
-    createWrapper({ store })
-    expect(store.dispatch).toHaveBeenCalledWith('fetchListData', {
-      type: 'top'
-    })
+    const type = 'a type'
+    const mocks = {
+      $route: {
+        params: { type }
+      }
+    }
+    createWrapper({ store, mocks })
+    expect(store.dispatch).toHaveBeenCalledWith('fetchListData', { type })
   })
 
   test('calls $bar.fail when load unsuccessful', async () => {
