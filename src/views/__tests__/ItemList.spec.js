@@ -264,4 +264,15 @@ describe('ItemListt.vue', () => {
     expect(wrapper.findAll('a').at(1).attributes().href).toBe(undefined)
     expect(wrapper.findAll('a').at(1).text()).toBe('more >')
   })
+
+  test('sets document.title with the capitalized type prop', () => {
+    createWrapper({
+      mocks: {
+        $route: {
+          params: { type: 'top' }
+        }
+      }
+    })
+    expect(document.title).toBe('Vue HN | Top')
+  })
 })
