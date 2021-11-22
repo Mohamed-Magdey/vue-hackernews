@@ -7,10 +7,16 @@ import ProgressBar from './components/ProgressBar'
 import storeConfig from './store/store-config'
 import { sync } from 'vuex-router-sync'
 import { titleMixin } from './util/mixins'
+import {
+  timeAgo,
+  host
+} from './util/filters'
 
 Vue.use(Vuex)
 Vue.use(Router)
 Vue.mixin(titleMixin)
+Vue.filter('timeAgo', timeAgo)
+Vue.filter('host', host)
 
 const router = new Router(routerConfig)
 const store = new Vuex.Store(storeConfig)
