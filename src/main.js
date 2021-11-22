@@ -5,12 +5,15 @@ import Router from 'vue-router'
 import routerConfig from './router/router-config'
 import ProgressBar from './components/ProgressBar'
 import storeConfig from './store/store-config'
+import { sync } from 'vuex-router-sync'
 
 Vue.use(Vuex)
 Vue.use(Router)
 
 const router = new Router(routerConfig)
 const store = new Vuex.Store(storeConfig)
+sync(store, router)
+
 Vue.config.productionTip = false
 
 const bar = new Vue(ProgressBar).$mount()
