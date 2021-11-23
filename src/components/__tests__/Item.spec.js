@@ -96,4 +96,47 @@ describe('Item.vue', () => {
     dateNow.mockRestore()
     expect(wrapper.text()).toContain('10 minutes ago')
   })
+
+  test('renders correctly', () => {
+    const dateNow = jest.spyOn(Date, 'now')
+    const dateNowTime = new Date('2018')
+    dateNow.mockImplementation(() => dateNowTime)
+    const item = {
+      by: 'eddyerburgh',
+      id: 11122233,
+      score: 10,
+      time: (dateNowTime / 1000) - 600,
+      title: 'vue-test-utils is released',
+      type: 'story',
+      url: 'https://vue-test-utils.vuejs.org/'
+    }
+    const wrapper = createWrapper(Item, {
+      propsData: {
+        item
+      }
+    })
+    dateNow.mockRestore()
+    expect(wrapper.element).toMatchSnapshot()
+  })
+
+  test('renders correctly as job', () => {
+    const dateNow = jest.spyOn(Date, 'now')
+    const dateNowTime = new Date('2018')
+    dateNow.mockImplementation(() => dateNowTime)
+    const item = {
+      by: 'eddyerburgh',
+      id: 11122233,
+      score: 10,
+      time: (dateNowTime / 1000) - 600,
+      title: 'vue-test-utils is released',
+      type: 'job'
+    }
+    const wrapper = createWrapper({
+      propsData: {
+        item
+      }
+    })
+    dateNow.mockRestore()
+    expect(wrapper.element).toMatchSnapshot()
+  })
 })
