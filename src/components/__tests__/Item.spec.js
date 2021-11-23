@@ -3,7 +3,16 @@ import {
   RouterLinkStub
 } from '@vue/test-utils'
 import Item from '../Item.vue'
-import merge from 'lodash.merge'
+import mergeWith from 'lodash.mergewith'
+
+function customizer(objValue, srcValue) {
+  if (Array.isArray(srcValue)) {
+    return srcValue
+  }
+  if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+    return srcValue
+  }
+}
 
 function createWrapper(overrides) {
   const defaultMountingOptions = {
@@ -14,7 +23,7 @@ function createWrapper(overrides) {
       item: {}
     }
   }
-  return shallowMount(Item, merge(defaultMountingOptions, overrides))
+  return shallowMount(Item, mergeWith(defaultMountingOptions, overrides, customizer))
 }
 
 describe('Item.vue', () => {
