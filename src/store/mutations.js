@@ -1,8 +1,11 @@
 import Vue from 'vue'
 
 export default {
-  SET_ITEMS: (state, { item }) => {
+  SET_ITEM: (state, { item }) => {
     state.item = item
+  },
+  SET_ITEMS: (state, { items }) => {
+    state.items = items
   },
   SET_COMMENTS: (state, { comments }) => {
     comments.forEach(comment => {
