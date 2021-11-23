@@ -5,13 +5,21 @@ import {
 } from '@vue/test-utils'
 import Vuex from 'vuex'
 import Comment from '../Comment.vue'
-import merge from 'lodash.merge'
+import mergeWith from 'lodash.mergewith'
+
+function customizer(objValue, srcValue) {
+  if (Array.isArray(srcValue)) {
+    return srcValue
+  }
+  if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+    return srcValue
+  }
+}
 
 const localVue = createLocalVue()
-
 localVue.use(Vuex)
 
-function createStore (overrides) {
+function createStore(overrides) {
   const defaultStoreConfig = {
     state: {
       comments: {
@@ -22,11 +30,11 @@ function createStore (overrides) {
     }
   }
   return new Vuex.Store(
-    merge(defaultStoreConfig, overrides)
+    mergeWith(defaultStoreConfig, overrides, customizer)
   )
 }
 
-function createWrapper (overrides) {
+function createWrapper(overrides) {
   const defaultMountingOptions = {
     stubs: {
       RouterLink: RouterLinkStub
@@ -37,7 +45,7 @@ function createWrapper (overrides) {
     },
     store: createStore()
   }
-  return shallowMount(Comment, merge(defaultMountingOptions, overrides))
+  return shallowMount(Comment, mergeWith(defaultMountingOptions, overrides, customizer))
 }
 
 describe('Comment.vue', () => {
