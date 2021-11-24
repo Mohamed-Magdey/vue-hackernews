@@ -1,4 +1,4 @@
-function getTitle (vm) {
+function getTitle(vm) {
   const { title } = vm.$options
   if (title) {
     return typeof title === 'function'
@@ -8,7 +8,7 @@ function getTitle (vm) {
 }
 
 export const titleMixin = {
-  mounted () {
+  mounted() {
     const title = getTitle(this)
     if (title) {
       document.title = `Vue HN | ${title}`
@@ -17,7 +17,7 @@ export const titleMixin = {
 }
 
 export const HTTPStatusMixin = {
-  created () {
+  created() {
     if (this.$ssrContext && this.$options.HTTPStatus) {
       this.$ssrContext.HTTPStatus = this.$options.HTTPStatus
     }

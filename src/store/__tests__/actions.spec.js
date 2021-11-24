@@ -9,16 +9,15 @@ describe('actions', () => {
     expect.assertions(1)
     const items = [{}, {}]
     const type = 'top'
-    fetchListData.mockImplementation(calledWith => {
-      return calledWith === type
-        ? Promise.resolve(items)
-        : Promise.resolve()
+
+    fetchListData.mockImplementationOnce(calledWith => {
+      return calledWith === type ? Promise.resolve(items) : Promise.resolve()
     })
     const context = {
       commit: jest.fn()
     }
     actions.fetchListData(context, { type })
     await flushPromises()
-    expect(context.commit).toHaveBeenCalledWith('setItems', { items })
+    expect(context.commit).toHaveBeenCalledWith('SET_ITEMS', { items })
   })
 })

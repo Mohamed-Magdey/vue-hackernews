@@ -1,4 +1,4 @@
-export function host (url) {
+export function host(url) {
   if (!url) {
     return ''
   }
@@ -10,10 +10,10 @@ export function host (url) {
   return parts.join('.')
 }
 
-export function timeAgo (time) {
-  const between = Date.now() / 1000 - Number(time)
-  if (between < 3600) {
-    return pluralize((between / 60), ' minute')
+export function timeAgo(time) {
+  const between = Date.now() / 1000 - Number(time) // #A
+  if (between < 3600) { // #B
+    return pluralize((between / 60), ' minute') // #C
   } else if (between < 86400) {
     return pluralize((between / 3600), ' hour')
   } else {
@@ -21,8 +21,8 @@ export function timeAgo (time) {
   }
 }
 
-function pluralize (time, label) {
-  const roundedTime = Math.round(time)
+function pluralize(time, label) { // #D
+  const roundedTime = Math.round(time) // #E
   if (roundedTime === 1) {
     return roundedTime + label
   }

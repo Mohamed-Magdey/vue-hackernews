@@ -7,4 +7,10 @@ describe('server', () => {
       .get('/top')
       .expect(200)
   })
+
+  test('returns a 404 when page does not exist', () => {
+    return request(app)
+      .get('/does-not-exist')
+      .expect(404)
+  })
 })

@@ -25,7 +25,7 @@ describe('host', () => {
     expect(host(url)).toBe('blogs.google.com')
   })
 
-  test('keep the subdomain', () => {
+  test('keeps the subdomain', () => {
     const url = 'https://blogs.google.com/long/path/ '
     expect(host(url)).toBe('blogs.google.com')
   })

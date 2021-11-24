@@ -1,5 +1,5 @@
-import { shallowMount } from '@vue/test-utils'
 import ProgressBar from '../ProgressBar.vue'
+import { shallowMount } from '@vue/test-utils'
 
 describe('ProgressBar.vue', () => {
   beforeEach(() => {
@@ -39,6 +39,18 @@ describe('ProgressBar.vue', () => {
     expect(wrapper.element.style.width).toBe('0%')
   })
 
+  test('styles the bar correctly when fail is called', () => {
+    const wrapper = shallowMount(ProgressBar)
+    wrapper.vm.fail()
+    expect(wrapper.classes()).toContain('error')
+  })
+
+  test('sets the bar to 100% width when fail is called', () => {
+    const wrapper = shallowMount(ProgressBar)
+    wrapper.vm.fail()
+    expect(wrapper.element.style.width).toBe('100%')
+  })
+
   test('removes error class when start is called', () => {
     const wrapper = shallowMount(ProgressBar)
     wrapper.vm.fail()
@@ -46,26 +58,14 @@ describe('ProgressBar.vue', () => {
     expect(wrapper.classes()).not.toContain('error')
   })
 
-  test('sets the bar to 100% width when fail is called', () => {
-    const wrapper = shallowMount(ProgressBar)
-    wrapper.vm.fail()
-    expect(wrapper.classes()).toContain('error')
-  })
-
-  test('styles the bar correctly when fail is called', () => {
-    const wrapper = shallowMount(ProgressBar)
-    wrapper.vm.fail()
-    expect(wrapper.element.style.width).toBe('100%')
-  })
-
   test('increases width by 1% every 100ms after start call', () => {
     const wrapper = shallowMount(ProgressBar)
     wrapper.vm.start()
-    jest.runTimersToTime(100)
+    jest.advanceTimersByTime(100)
     expect(wrapper.element.style.width).toBe('1%')
-    jest.runTimersToTime(900)
+    jest.advanceTimersByTime(900)
     expect(wrapper.element.style.width).toBe('10%')
-    jest.runTimersToTime(4000)
+    jest.advanceTimersByTime(4000)
     expect(wrapper.element.style.width).toBe('50%')
   })
 

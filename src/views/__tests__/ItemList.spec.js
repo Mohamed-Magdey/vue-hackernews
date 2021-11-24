@@ -1,19 +1,25 @@
-import {
-  shallowMount,
-  createLocalVue,
-  RouterLinkStub
-} from '@vue/test-utils'
-import Vuex from 'vuex'
-import flushPromises from 'flush-promises'
-import merge from 'lodash.merge'
 import ItemList from '../ItemList.vue'
 import Item from '../../components/Item.vue'
+import { shallowMount, createLocalVue, RouterLinkStub } from '@vue/test-utils'
+import Vuex from 'vuex'
+import flushPromises from 'flush-promises'
+import mergeWith from 'lodash.mergewith'
+
+// For accepting empty default values
+function customizer(objValue, srcValue) {
+  if (Array.isArray(srcValue)) {
+    return srcValue
+  }
+  if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+    return srcValue
+  }
+}
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-describe('ItemList.vue', () => {
-  function createStore (overrides) {
+describe('ItemListt.vue', () => {
+  function createStore(overrides) {
     const defaultStoreConfig = {
       getters: {
         displayItems: jest.fn()
@@ -22,12 +28,10 @@ describe('ItemList.vue', () => {
         fetchListData: jest.fn(() => Promise.resolve())
       }
     }
-    return new Vuex.Store(
-      merge(defaultStoreConfig, overrides)
-    )
+    return new Vuex.Store(mergeWith(defaultStoreConfig, overrides, customizer))
   }
 
-  function createWrapper (overrides) {
+  function createWrapper(overrides) {
     const defaultMountingOptions = {
       mocks: {
         $bar: {
@@ -36,7 +40,9 @@ describe('ItemList.vue', () => {
           fail: jest.fn()
         },
         $route: {
-          params: { type: 'top' }
+          params: {
+            type: 'top'
+          }
         }
       },
       stubs: {
@@ -45,7 +51,7 @@ describe('ItemList.vue', () => {
       localVue,
       store: createStore()
     }
-    return shallowMount(ItemList, merge(defaultMountingOptions, overrides))
+    return shallowMount(ItemList, mergeWith(defaultMountingOptions, overrides, customizer))
   }
 
   test('renders an Item with data for each item in displayItems', () => {
@@ -55,7 +61,6 @@ describe('ItemList.vue', () => {
         displayItems: () => items
       }
     })
-
     const wrapper = createWrapper({ store })
     const Items = wrapper.findAll(Item)
     expect(Items).toHaveLength(items.length)
@@ -71,10 +76,10 @@ describe('ItemList.vue', () => {
       }
     }
     createWrapper({ mocks })
-    expect(mocks.$bar.start).toHaveBeenCalled()
+    expect(mocks.$bar.start).toHaveBeenCalledTimes(1)
   })
 
-  test('calls $bar finish when load successful', async () => {
+  test('calls $bar.finish when load is successful', async () => {
     expect.assertions(1)
     const mocks = {
       $bar: {
@@ -83,7 +88,7 @@ describe('ItemList.vue', () => {
     }
     createWrapper({ mocks })
     await flushPromises()
-    expect(mocks.$bar.finish).toHaveBeenCalled()
+    expect(mocks.$bar.finish).toHaveBeenCalledTimes(1)
   })
 
   test('dispatches fetchListData with $route.params.type', async () => {
@@ -93,25 +98,26 @@ describe('ItemList.vue', () => {
     const type = 'a type'
     const mocks = {
       $route: {
-        params: {
-          type
-        }
+        params: { type }
       }
     }
     createWrapper({ store, mocks })
-    await flushPromises()
     expect(store.dispatch).toHaveBeenCalledWith('fetchListData', { type })
   })
 
-  test('calls $bar fail when fetchListData throws', async () => {
+  test('calls $bar.fail when load unsuccessful', async () => {
+    expect.assertions(1)
     const store = createStore({
-      actions: { fetchListData: jest.fn(() => Promise.reject()) }
+      actions: {
+        fetchListData: jest.fn(() => Promise.reject())
+      }
     })
     const mocks = {
       $bar: {
         fail: jest.fn()
       }
     }
+
     createWrapper({ mocks, store })
     await flushPromises()
     expect(mocks.$bar.fail).toHaveBeenCalled()
@@ -203,11 +209,12 @@ describe('ItemList.vue', () => {
   test('renders a RouterLink with the previous page if one exists', () => {
     const mocks = {
       $route: {
-        params: { page: '2' }
+        params: {
+          page: '2'
+        }
       }
     }
     const wrapper = createWrapper({ mocks })
-
     expect(wrapper.find(RouterLinkStub).props().to).toBe('/top/1')
     expect(wrapper.find(RouterLinkStub).text()).toBe('< prev')
   })
@@ -220,10 +227,12 @@ describe('ItemList.vue', () => {
     })
     const mocks = {
       $route: {
-        params: { page: '1' }
+        params: {
+          page: '1'
+        }
       }
     }
-    const wrapper = createWrapper({ store, mocks })
+    const wrapper = createWrapper({ mocks, store })
     expect(wrapper.find(RouterLinkStub).props().to).toBe('/top/2')
     expect(wrapper.find(RouterLinkStub).text()).toBe('more >')
   })
@@ -234,15 +243,13 @@ describe('ItemList.vue', () => {
         maxPage: () => 3
       }
     })
-    const wrapper = createWrapper({ store
-    })
+    const wrapper = createWrapper({ store })
     expect(wrapper.find(RouterLinkStub).props().to).toBe('/top/2')
     expect(wrapper.find(RouterLinkStub).text()).toBe('more >')
   })
 
   test('renders an <a> element without an href if there are no previous pages', () => {
     const wrapper = createWrapper()
-
     expect(wrapper.find('a').attributes().href).toBe(undefined)
     expect(wrapper.find('a').text()).toBe('< prev')
   })
@@ -254,7 +261,6 @@ describe('ItemList.vue', () => {
       }
     })
     const wrapper = createWrapper({ store })
-
     expect(wrapper.findAll('a').at(1).attributes().href).toBe(undefined)
     expect(wrapper.findAll('a').at(1).text()).toBe('more >')
   })
@@ -262,7 +268,9 @@ describe('ItemList.vue', () => {
   test('sets document.title with the capitalized type prop', () => {
     createWrapper({
       mocks: {
-        $route: { params: { type: 'top' } }
+        $route: {
+          params: { type: 'top' }
+        }
       }
     })
     expect(document.title).toBe('Vue HN | Top')

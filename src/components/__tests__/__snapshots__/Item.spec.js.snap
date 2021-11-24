@@ -7,24 +7,23 @@ exports[`Item.vue renders correctly 1`] = `
   <span
     class="score"
   >
-    10
+    
   </span>
    
   <span
     class="title"
   >
     <a
-      href="https://vue-test-utils.vuejs.org/"
       rel="noopener"
       target="_blank"
     >
-      vue-test-utils is released
+      
     </a>
      
     <span
       class="host"
     >
-       (vue-test-utils.vuejs.org)
+       ()
     </span>
   </span>
    
@@ -39,7 +38,7 @@ exports[`Item.vue renders correctly 1`] = `
       
       by 
       <a>
-        eddyerburgh
+        
       </a>
     </span>
      
@@ -55,14 +54,14 @@ exports[`Item.vue renders correctly 1`] = `
      
     <span>
       
-      10 minutes ago
+      NaN days ago
     
     </span>
   </span>
 </li>
 `;
 
-exports[`Item.vue renders correctly when item has no url 1`] = `
+exports[`Item.vue renders correctly as job 1`] = `
 <li
   class="news-item"
 >
@@ -94,25 +93,9 @@ exports[`Item.vue renders correctly when item has no url 1`] = `
   <span
     class="meta"
   >
-    <span
-      class="by"
-    >
-      
-      by 
-      <a>
-        eddyerburgh
-      </a>
-    </span>
+    <!---->
      
-    <span
-      class="comments-link"
-    >
-      
-      | 
-      <a>
-         comments
-      </a>
-    </span>
+    <!---->
      
     <span>
       

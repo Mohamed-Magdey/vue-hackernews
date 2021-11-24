@@ -10,6 +10,7 @@ describe('NotFound', () => {
     const str = renderToString(NotFound)
     expect(str).toMatchSnapshot()
   })
+
   test('renders 404 inside <h1> tag', () => {
     const wrapper = render(NotFound)
     expect(wrapper.find('h1').text()).toBe('404')

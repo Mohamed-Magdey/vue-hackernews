@@ -1,21 +1,20 @@
 import Vue from 'vue'
 
 export default {
-  setItem: (state, { item }) => {
+  SET_ITEM: (state, { item }) => {
     state.item = item
   },
-  setItems: (state, { items }) => {
+  SET_ITEMS: (state, { items }) => {
     state.items = items
   },
-  setComments: (state, { comments }) => {
+  SET_COMMENTS: (state, { comments }) => {
     comments.forEach(comment => {
-      console.log(comment, 'comment')
       if (comment) {
         Vue.set(state.comments, comment.id, comment)
       }
     })
   },
-  setUser: (state, { user }) => {
+  SET_USER: (state, { user }) => {
     state.user = user
   }
 }

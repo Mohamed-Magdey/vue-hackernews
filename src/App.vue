@@ -17,7 +17,6 @@
 
 <script>
 import ItemList from './views/ItemList.vue'
-
 export default {
   components: {
     ItemList
@@ -27,7 +26,7 @@ export default {
 
 <style>
 body {
-  font-family: -apple-system,"Droid Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 15px;
   background-color: #f2f3f5;
   margin: 0;
@@ -40,7 +39,7 @@ a {
   text-decoration: none;
 }
 li {
-  list-style: none
+  list-style: none;
 }
 .header {
   background-color: #f60;
@@ -58,7 +57,7 @@ li {
   padding: 15px 5px;
 }
 .header a {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   line-height: 24px;
   transition: color 0.15s ease;
   display: inline-block;

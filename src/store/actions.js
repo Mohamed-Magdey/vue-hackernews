@@ -8,7 +8,7 @@ import {
 export default {
   fetchListData: ({ commit }, { type }) => {
     return fetchListData(type)
-      .then(items => commit('setItems', { items }))
+      .then(items => commit('SET_ITEMS', { items }))
   },
   fetchComments: ({ commit, dispatch }, { item }) => {
     if (!item) {
@@ -16,7 +16,7 @@ export default {
     }
     return fetchItems(item.kids || [])
       .then(comments => {
-        commit('setComments', { comments })
+        commit('SET_COMMENTS', { comments })
         return Promise.all(
           comments.map(item =>
             dispatch('fetchComments', { item })
@@ -26,10 +26,10 @@ export default {
   },
   fetchItem: ({ commit }, { id }) => {
     return fetchItem(id)
-      .then(item => commit('setItem', { item }))
+      .then(item => commit('SET_ITEM', { item }))
   },
   fetchUser: ({ commit, state }, { id }) => {
     return fetchUser(id)
-      .then(user => commit('setUser', { user }))
+      .then(user => commit('SET_USER', { user }))
   }
 }

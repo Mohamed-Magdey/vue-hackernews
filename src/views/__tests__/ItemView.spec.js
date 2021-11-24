@@ -5,15 +5,24 @@ import {
 } from '@vue/test-utils'
 import Vuex from 'vuex'
 import flushPromises from 'flush-promises'
-import merge from 'lodash.merge'
+import mergeWith from 'lodash.mergewith'
 import ItemView from '../ItemView.vue'
 import Spinner from '../../components/Spinner.vue'
 import Comment from '../../components/Comment.vue'
 
+function customizer(objValue, srcValue) {
+  if (Array.isArray(srcValue)) {
+    return srcValue
+  }
+  if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+    return srcValue
+  }
+}
+
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
-function createStore (overrides) {
+function createStore(overrides) {
   const defaultStoreConfig = {
     actions: {
       fetchComments: jest.fn(() => Promise.resolve()),
@@ -25,11 +34,11 @@ function createStore (overrides) {
     }
   }
   return new Vuex.Store(
-    merge(defaultStoreConfig, overrides)
+    mergeWith(defaultStoreConfig, overrides, customizer)
   )
 }
 
-function createWrapper (overrides) {
+function createWrapper(overrides) {
   const defaultMountingOptions = {
     mocks: {
       $route: {
@@ -42,7 +51,7 @@ function createWrapper (overrides) {
     localVue,
     store: createStore()
   }
-  return shallowMount(ItemView, merge(defaultMountingOptions, overrides))
+  return shallowMount(ItemView, mergeWith(defaultMountingOptions, overrides, customizer))
 }
 
 describe('ItemView.vue', () => {

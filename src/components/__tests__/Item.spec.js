@@ -3,9 +3,18 @@ import {
   RouterLinkStub
 } from '@vue/test-utils'
 import Item from '../Item.vue'
-import merge from 'lodash.merge'
+import mergeWith from 'lodash.mergewith'
 
-function createWrapper (overrides) {
+function customizer(objValue, srcValue) {
+  if (Array.isArray(srcValue)) {
+    return srcValue
+  }
+  if (srcValue instanceof Object && Object.keys(srcValue).length === 0) {
+    return srcValue
+  }
+}
+
+function createWrapper(overrides) {
   const defaultMountingOptions = {
     stubs: {
       RouterLink: RouterLinkStub
@@ -14,7 +23,7 @@ function createWrapper (overrides) {
       item: {}
     }
   }
-  return shallowMount(Item, merge(defaultMountingOptions, overrides))
+  return shallowMount(Item, mergeWith(defaultMountingOptions, overrides, customizer))
 }
 
 describe('Item.vue', () => {
@@ -91,9 +100,7 @@ describe('Item.vue', () => {
   test('renders correctly', () => {
     const dateNow = jest.spyOn(Date, 'now')
     const dateNowTime = new Date('2018')
-
     dateNow.mockImplementation(() => dateNowTime)
-
     const item = {
       by: 'eddyerburgh',
       id: 11122233,
@@ -103,7 +110,7 @@ describe('Item.vue', () => {
       type: 'story',
       url: 'https://vue-test-utils.vuejs.org/'
     }
-    const wrapper = createWrapper({
+    const wrapper = createWrapper(Item, {
       propsData: {
         item
       }
@@ -112,24 +119,24 @@ describe('Item.vue', () => {
     expect(wrapper.element).toMatchSnapshot()
   })
 
-  test('renders correctly when item has no url', () => {
+  test('renders correctly as job', () => {
     const dateNow = jest.spyOn(Date, 'now')
     const dateNowTime = new Date('2018')
-
     dateNow.mockImplementation(() => dateNowTime)
-
     const item = {
       by: 'eddyerburgh',
       id: 11122233,
       score: 10,
       time: (dateNowTime / 1000) - 600,
-      title: 'vue-test-utils is released'
+      title: 'vue-test-utils is released',
+      type: 'job'
     }
     const wrapper = createWrapper({
       propsData: {
         item
       }
     })
+    dateNow.mockRestore()
     expect(wrapper.element).toMatchSnapshot()
   })
 })
